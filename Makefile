@@ -1,5 +1,5 @@
 SYSCONF_LINK = gcc
-CPPFLAGS     =
+CPPFLAGS     = -std=c99
 LDFLAGS      =
 LIBS         = -lm
 
