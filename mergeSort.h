@@ -5,7 +5,9 @@
 #include <stdlib.h> // for random
 #include <stdio.h> // for printf
 
-const int *sort(int *array, int start, int end);
+void sort(int *array, int start, int end);
+
+void merge(int *array, int start, int mid, int end);
 
 void initialization(int *array, const int length);
 

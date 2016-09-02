@@ -8,6 +8,7 @@ int main(int argc, char** argv){
   int array[length];
   initialization(array, length);
   print(array, length);
-  int *sortedArray = sort(array, 0, length - 1);
+  sort(array, 0, length - 1);
+  print(array, length);
   return EXIT_SUCCESS;
 }

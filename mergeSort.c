@@ -1,14 +1,59 @@
 #include "mergeSort.h"
 
-const int *sort(int *array, int start, int end){
-  int k = 0;
-  if(size(array) < 2){
-    perror("Incorerct array's size !");
-    exit(EXIT_FAILURE);
-  }
+void sort(int *array, int start, int end){
   if(start < end){
-    k = (start + end) / 2 ;
+    int k = 0;
+    k = (start + (end - 1 )) / 2 ;
+    sort(array, start, k);
+    sort(array, k + 1, end);
+    merge(array, start, k, end);
   }
+}
+
+void merge(int *array, int start, int mid, int end){
+  // assign left and right size
+  int l = mid - start + 1 ; // left side
+  int r = end - mid;
+
+  // create 2 temporaries arrays
+  int left[l];
+  int right[r];
+
+  // copy values from array to left and right
+  for(int i = 0 ; i < l ; i++){
+    left[i] = array[start + i];
+  }
+  for(int i = 0 ; i < r ; i++){
+    right[i] = array[mid + 1 + i];
+  }
+  
+  int i, j, k;
+  i = 0;
+  j = 0;
+  k = start;
+  while(i < l && j < r){
+    if(left[i] <= right[j]){
+      array[k] = left[i];
+      i++;
+    }else{
+      array[k] = right[j];
+      j++;
+    }
+    k++;
+  }
+
+  // copy remaining elements
+  while(i < l){
+    array[k] = left[i];
+    i++;
+    k++;
+  }
+
+  while(j < r){
+    array[k] = right[j];
+    j++;
+    k++;
+    }
 }
 
 void initialization(int *array, const int length){
