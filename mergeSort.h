@@ -11,7 +11,7 @@ void merge(int *array, int start, int mid, int end);
 
 void initialization(int *array, const int length);
 
-void print(int *array, const int length);
+void print(int *array, int start, int end);
 
 int size(int *array);
 

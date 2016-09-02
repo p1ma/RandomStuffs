@@ -59,16 +59,8 @@ void merge(int *array, int start, int mid, int end){
 void initialization(int *array, const int length){
   srand((unsigned)time(NULL));
   for(int i = 0 ; i < length ; i++){
-    array[i] = rand() % 100;
+    array[i] = (rand() % 100) + 1; // ]0,100]
   }
-  return;
-}
-
-void print(int *array, const int length){
-  for(int i = 0 ; i < length; i++){
-    printf("[%d]",array[i]);
-  }
-  printf("\n");
   return;
 }
 
@@ -79,4 +71,11 @@ int size(int *array){
     counter++;
   }
   return counter;
+}
+
+void print(int *array, int start, int end){
+  for(int i = start ; i < end; i++){
+    printf("[%d]",array[i]);
+  }
+  return;
 }
