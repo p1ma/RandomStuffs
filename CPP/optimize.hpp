@@ -3,13 +3,14 @@
 
 #include <string>
 
-#define WIDTH 4
+#define WIDTH 2
 #define HEIGHT 3
 #define DELIMITER ','
 class Optimize{
 private :
 int *max;
 int **system;
+int **standard;
 int height;
 int selectColumn();
 int selectLine(int const &pivot);
@@ -19,6 +20,7 @@ public :
 ~Optimize();
 std::string printMax();
 std::string printSystem();
+std::string printStandardForm();
 int *simplex(); // execute simplex method
 
 };

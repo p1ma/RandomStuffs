@@ -34,6 +34,7 @@ Optimize::Optimize(const std::string &file){
       }
       if(index != 0){
 	this->system[w-1][HEIGHT + z] = std::stoi(line);
+	std::cout << "index = " << (HEIGHT + z) << " = " << line << std::endl;
       }
       w++;
       z = 0;
@@ -78,8 +79,6 @@ std::string Optimize::printSystem(){
       if(j != 0 && j != WIDTH){
 	if(this->system[i][j] > 0){
 	  elem = "+";
-	}else{
-	  elem = "-";
 	}
       }
       if( j < WIDTH ){
@@ -110,19 +109,33 @@ int *Optimize::simplex(){
     this->system[i][WIDTH + i] = 1;
   }
 
+  // standard = max + system
+  this->standard = new int*[HEIGHT + 1];
+  for(int w = 0 ; w < HEIGHT + 1 ; w++){
+    this->standard[w] = new int[WIDTH + HEIGHT + 1];
+    this->standard[w] = {0};
+    if(w != HEIGHT){
+      this->standard[w] = this->system[w];
+    }else{
+      this->standard[w] = this->max;
+    }
+  }
+
   int pivotColumn = 0;
   int pivotLine = 0;
   // choose the greater value from max array
   pivotColumn = Optimize::selectColumn();
-  std::cout << "Selected Column : " << pivotColumn << ", coefficient = " << this->max[pivotColumn] << std::endl;
+  std::cout << "Selected Column : " << pivotColumn << ", coefficient = " << this->standard[HEIGHT][pivotColumn] << std::endl;
 
   // choose the minimum value
   pivotLine = Optimize::selectLine(pivotColumn);
-  std::cout << "Selected Line : " << pivotLine << ", coefficient = " << this->system[pivotLine][WIDTH + HEIGHT] << std::endl;
+  std::cout << "Selected Line : " << pivotLine << ", coefficient = " << this->standard[pivotLine][WIDTH + HEIGHT] << std::endl;
 
-  std::cout << "Select pivot ( " << pivotLine << " , " << pivotColumn << " ) value = " << this->system[pivotLine][pivotColumn] << std::endl;
+  std::cout << "Select pivot ( " << pivotLine << " , " << pivotColumn << " ) value = " << this->standard[pivotLine][pivotColumn] << std::endl;
 
   Optimize::pivotProduces(pivotLine,pivotColumn); // execute pivot produces on this->system
+
+  std::cout << Optimize::printStandardForm() << std::endl;
 
   return result;
 }
@@ -131,8 +144,8 @@ int Optimize::selectColumn(){
   int max = 0;
   int index = 0;
   for(int i = 0; i < WIDTH ; i++){
-    if(this->max[i] > max){
-      max = this->max[i];
+    if(this->standard[HEIGHT][i] > max){
+      max = this->standard[HEIGHT][i];
       index = i;
     }
   }
@@ -144,8 +157,8 @@ int Optimize::selectLine(int const &pivot){
   int index = 0;
   int factor = 0;
   for(int i = 0 ; i < HEIGHT ; i++){
-    if(this->system[i][pivot] != 0){
-      factor = (this->system[i][WIDTH + HEIGHT] / this->system[i][pivot]);
+    if(this->standard[i][pivot] != 0){
+      factor = (this->standard[i][WIDTH + HEIGHT] / this->standard[i][pivot]);
     }else{
       factor = std::numeric_limits<int>::max();
     }
@@ -159,12 +172,58 @@ int Optimize::selectLine(int const &pivot){
 
 // execute pivot produces
 void Optimize::pivotProduces(int const &pivotLine,int const &pivotColumn){
+  // Eij' = Eij - [(Aij / pivotValue) * this->system[pivotLine][j])
+  int Aij = 0;
+  int pivotValue = this->standard[pivotLine][pivotColumn];
   for(int line = 0 ; line < HEIGHT ; line ++){
+    Aij = this->standard[line][pivotColumn] ;
     for(int column = 0 ; column < (WIDTH + HEIGHT + 1) ; column ++){
       if(line != pivotLine){
-
+	if(pivotValue != 0){
+	  this->standard[line][column] = this->standard[line][column] - ((Aij / pivotValue) * this->standard[pivotLine][column]);
+	}
       }
     }
   }
   return;
+}
+
+std::string Optimize::printStandardForm(){
+  std::string result = "", elem = "";
+  int e = 1;
+for(int i = 0 ; i < HEIGHT + 1; i++){
+    for(int j = 0 ; j < (WIDTH + HEIGHT + 2) ; j++){
+      if(j < WIDTH + HEIGHT){
+	if(j != 0 && j != WIDTH + HEIGHT){
+	if(this->standard[i][j] >= 0){
+	  elem = "+";
+	}
+      }
+      if( j < WIDTH ){
+        elem.append(std::to_string(this->standard[i][j]));
+	elem.append("*x");
+	elem.append(std::to_string((j+1)));
+	elem.append(" ");
+      }
+      if(j >= WIDTH && j < WIDTH + HEIGHT){
+	if(this->standard[i][j] != 0){
+	  elem.append(std::to_string(this->standard[i][j]));
+	  elem.append("*e");
+	}else{
+	  elem.append("e");
+	}
+	elem.append(std::to_string(e));
+	elem.append(" ");
+	e++;
+      }
+      result.append(elem);
+      elem = "";
+      }
+    }
+        result.append("<= ");
+	result.append(std::to_string(this->standard[i][WIDTH + HEIGHT]));
+	result.append("\n");
+	e = 1;
+ }
+ return result;
 }
