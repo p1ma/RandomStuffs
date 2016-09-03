@@ -175,7 +175,7 @@ void Optimize::pivotProduces(int const &pivotLine,int const &pivotColumn){
   // Eij' = Eij - [(Aij / pivotValue) * this->system[pivotLine][j])
   int Aij = 0;
   int pivotValue = this->standard[pivotLine][pivotColumn];
-  for(int line = 0 ; line < HEIGHT ; line ++){
+  for(int line = 0 ; line < HEIGHT + 1 ; line ++){
     Aij = this->standard[line][pivotColumn] ;
     for(int column = 0 ; column < (WIDTH + HEIGHT + 1) ; column ++){
       if(line != pivotLine){
@@ -206,12 +206,8 @@ for(int i = 0 ; i < HEIGHT + 1; i++){
 	elem.append(" ");
       }
       if(j >= WIDTH && j < WIDTH + HEIGHT){
-	if(this->standard[i][j] != 0){
-	  elem.append(std::to_string(this->standard[i][j]));
-	  elem.append("*e");
-	}else{
-	  elem.append("e");
-	}
+	elem.append(std::to_string(this->standard[i][j]));
+	elem.append("*e");
 	elem.append(std::to_string(e));
 	elem.append(" ");
 	e++;
