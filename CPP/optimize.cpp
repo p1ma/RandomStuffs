@@ -3,6 +3,7 @@
 #include <sstream>
 #include <iostream>
 #include <errno.h>
+#include <limits>
 
 // constructor
 Optimize::Optimize(const std::string &file){
@@ -18,7 +19,7 @@ Optimize::Optimize(const std::string &file){
       size_t pos = 0;
       std::string val = "";
       if(index != 0){
-	this->system[w - 1] = new int[WIDTH + 1];
+	this->system[w - 1] = new int[WIDTH + 1 + HEIGHT];
       }
       while((pos = line.find(DELIMITER)) != std::string::npos){
 	val = line.substr(0,pos);
@@ -32,7 +33,7 @@ Optimize::Optimize(const std::string &file){
 	line.erase(0, (pos + 1));
       }
       if(index != 0){
-	this->system[w-1][z] = std::stoi(line);
+	this->system[w-1][HEIGHT + z] = std::stoi(line);
       }
       w++;
       z = 0;
@@ -88,7 +89,7 @@ std::string Optimize::printSystem(){
 	elem.append(" ");
       }else{
 	elem.append("<= ");
-	elem.append(std::to_string(this->system[i][j]));
+	elem.append(std::to_string(this->system[i][j + HEIGHT]));
 	elem.append("\n");
 	}
       result.append(elem);
@@ -97,4 +98,73 @@ std::string Optimize::printSystem(){
     result.append("\n");
   }
     return result;
+}
+
+// execute simplex method
+int *Optimize::simplex(){
+  int *result = new int[WIDTH];
+  result = {0};
+
+  // canonical form -> standard form : add slacks variables
+  for(int i = 0 ; i < HEIGHT ; i++){
+    this->system[i][WIDTH + i] = 1;
+  }
+
+  int pivotColumn = 0;
+  int pivotLine = 0;
+  // choose the greater value from max array
+  pivotColumn = Optimize::selectColumn();
+  std::cout << "Selected Column : " << pivotColumn << ", coefficient = " << this->max[pivotColumn] << std::endl;
+
+  // choose the minimum value
+  pivotLine = Optimize::selectLine(pivotColumn);
+  std::cout << "Selected Line : " << pivotLine << ", coefficient = " << this->system[pivotLine][WIDTH + HEIGHT] << std::endl;
+
+  std::cout << "Select pivot ( " << pivotLine << " , " << pivotColumn << " ) value = " << this->system[pivotLine][pivotColumn] << std::endl;
+
+  Optimize::pivotProduces(pivotLine,pivotColumn); // execute pivot produces on this->system
+
+  return result;
+}
+
+int Optimize::selectColumn(){
+  int max = 0;
+  int index = 0;
+  for(int i = 0; i < WIDTH ; i++){
+    if(this->max[i] > max){
+      max = this->max[i];
+      index = i;
+    }
+  }
+  return index;
+}
+
+int Optimize::selectLine(int const &pivot){
+  int min = std::numeric_limits<int>::max();
+  int index = 0;
+  int factor = 0;
+  for(int i = 0 ; i < HEIGHT ; i++){
+    if(this->system[i][pivot] != 0){
+      factor = (this->system[i][WIDTH + HEIGHT] / this->system[i][pivot]);
+    }else{
+      factor = std::numeric_limits<int>::max();
+    }
+    if(factor < min){
+      min = factor;
+      index = i;
+    }
+  }
+  return index;
+}
+
+// execute pivot produces
+void Optimize::pivotProduces(int const &pivotLine,int const &pivotColumn){
+  for(int line = 0 ; line < HEIGHT ; line ++){
+    for(int column = 0 ; column < (WIDTH + HEIGHT + 1) ; column ++){
+      if(line != pivotLine){
+
+      }
+    }
+  }
+  return;
 }
