@@ -1,5 +1,5 @@
 SYSCONF_LINK = gcc
-CPPFLAGS     = -std=c99
+CPPFLAGS     = -std=c99 -Wall
 LDFLAGS      =
 LIBS         = -lm
 
@@ -19,4 +19,3 @@ $(OBJECTS): %.o: %.c
 clean:
 	-rm -f $(OBJECTS)
 	-rm -f $(TARGET)
-	-rm -f *.tga

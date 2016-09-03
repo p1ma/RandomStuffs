@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <sys/time.h>
 #include "mergeSort.h"
 
@@ -8,7 +9,8 @@
 // chronometer
 time_t begin, end;
 
-int main(int argc, char** argv){
+
+void testMergeSort(){
   int array[length];
   initialization(array, length); // initialize array with 'length' randoms values
   printf("Initial array : \n");
@@ -21,5 +23,10 @@ int main(int argc, char** argv){
   print(array, 0, length);
   printf("\n");
   printf("Execution time :  %.2f s\n", difftime(end,begin));
+}
+
+// MAIN
+int main(int argc, char* argv[]){
+  testMergeSort();
   return EXIT_SUCCESS;
 }

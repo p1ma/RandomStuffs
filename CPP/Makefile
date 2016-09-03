@@ -1,22 +1,21 @@
-SYSCONF_LINK = gcc
-CPPFLAGS     = -std=c99
+SYSCONF_LINK = g++
+CPPFLAGS     = -Wall
 LDFLAGS      =
 LIBS         = -lm
 
 DESTDIR = ./
-TARGET  = main
+TARGET  = optimization
 
-OBJECTS := $(patsubst %.c,%.o,$(wildcard *.c))
+OBJECTS := $(patsubst %.cpp,%.o,$(wildcard *.cpp))
 
 all: $(DESTDIR)$(TARGET)
 
 $(DESTDIR)$(TARGET): $(OBJECTS)
 	$(SYSCONF_LINK) -Wall $(LDFLAGS) -o $(DESTDIR)$(TARGET) $(OBJECTS) $(LIBS)
 
-$(OBJECTS): %.o: %.c
+$(OBJECTS): %.o: %.cpp
 	$(SYSCONF_LINK) -Wall $(CPPFLAGS) -c $(CFLAGS) $< -o $@
 
 clean:
 	-rm -f $(OBJECTS)
 	-rm -f $(TARGET)
-	-rm -f *.tga
