@@ -15,6 +15,9 @@ int height;
 int selectColumn();
 int selectLine(int const &pivot);
 void pivotProduces(int const &pivotLine,int const &pivotColumn);
+bool const finish();
+std::string result();
+
 public :
   Optimize(const std::string &file);
 ~Optimize();

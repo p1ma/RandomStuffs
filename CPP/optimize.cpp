@@ -4,6 +4,7 @@
 #include <iostream>
 #include <errno.h>
 #include <limits>
+#include <cstdlib>
 
 // constructor
 Optimize::Optimize(const std::string &file){
@@ -34,7 +35,6 @@ Optimize::Optimize(const std::string &file){
       }
       if(index != 0){
 	this->system[w-1][HEIGHT + z] = std::stoi(line);
-	std::cout << "index = " << (HEIGHT + z) << " = " << line << std::endl;
       }
       w++;
       z = 0;
@@ -123,6 +123,8 @@ int *Optimize::simplex(){
 
   int pivotColumn = 0;
   int pivotLine = 0;
+
+  while(!Optimize::finish()){
   // choose the greater value from max array
   pivotColumn = Optimize::selectColumn();
   std::cout << "Selected Column : " << pivotColumn << ", coefficient = " << this->standard[HEIGHT][pivotColumn] << std::endl;
@@ -134,8 +136,9 @@ int *Optimize::simplex(){
   std::cout << "Select pivot ( " << pivotLine << " , " << pivotColumn << " ) value = " << this->standard[pivotLine][pivotColumn] << std::endl;
 
   Optimize::pivotProduces(pivotLine,pivotColumn); // execute pivot produces on this->system
-
+  }
   std::cout << Optimize::printStandardForm() << std::endl;
+  std::cout << Optimize::result();
 
   return result;
 }
@@ -222,4 +225,28 @@ for(int i = 0 ; i < HEIGHT + 1; i++){
 	e = 1;
  }
  return result;
+}
+
+// return true if the max function has all positives members
+bool const Optimize::finish(){
+  bool b = true;
+  for(int i = 0 ; i < WIDTH + HEIGHT ; i++){
+    if(this->standard[HEIGHT][i] > 0){
+      b = false;
+      break;
+    }
+  }
+  return b;
+}
+
+std::string Optimize::result(){
+  std::string res = "";
+  res.append("Maximum = " + std::to_string(abs(this->standard[HEIGHT][WIDTH + HEIGHT]))); 
+  res.append("\n");
+  for(int i = 0 ; i < HEIGHT ; i++){
+    res.append("\t-Number of x" + std::to_string(i + 1));
+    res.append(" = " + std::to_string(this->standard[i][WIDTH + HEIGHT]));
+    res.append("\n");
+  }
+  return res;
 }
